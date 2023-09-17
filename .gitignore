@@ -2,6 +2,7 @@
 node_modules
 /dist
 
+google-map-apikey.json
 
 # local env files
 .env.local
