@@ -5,10 +5,11 @@
         </div>
         <p></p>
         <div>
-            <button @click="mapClickerFunction('startingCoords', 'start', 'yellow')" :disabled="startingCoords">Set starting
+            <button @click="mapClickerFunction('startingCoords', 'start', 'yellow')" :disabled="startingCoords || !buttonClickable">Set starting
                 location</button>
-            <button @click="mapClickerFunction('destinationCoords', 'destination', 'lime')" :disabled="destinationCoords">Set
+            <button @click="mapClickerFunction('destinationCoords', 'destination', 'lime')" :disabled="destinationCoords || !buttonClickable">Set
                 destination</button>
+                <p v-if="!buttonClickable" style="color: red;">Click on the map to select a location</p>
         </div>
         <p></p>
         <button @click="cheapestOption(startingCoords, destinationCoords)"
@@ -22,7 +23,7 @@
         </div>
         <div v-if="showLocation">
             <p v-if="currentPosition.lat || currentPosition.lng">
-                {{ currentPosition.lat }}, {{ currentPosition.lng }}
+                Your current location: {{ currentPosition.lat }}, {{ currentPosition.lng }}
             </p>
             <p v-else>Loading...</p>
             <p v-if="error">{{ error }}</p>
@@ -121,11 +122,14 @@ export default {
 
         // setting the starting and destination coordinates
         let clickListener = null;
+        let buttonClickable = ref(true);
 
         function mapClickerFunction(variableName, name, color) {
             let coordinatesVariable = null;
+            buttonClickable.value = false;
             clickListener = map.addListener('click', ({ latLng: { lat, lng } }) => {
                 coordinatesVariable = { lat: lat(), lng: lng() }
+                buttonClickable.value = true;
             })
 
             let createMarker = setInterval(function () {
@@ -310,6 +314,7 @@ export default {
             startingCoords,
             cheapestOption,
             shortestOption,
+            buttonClickable
         }
     }
 }
