@@ -1,3 +1,4 @@
 {
     "apiKey": "put in your google map api key here"
+    "mapID": "DEMO_MAP_ID"
 }
