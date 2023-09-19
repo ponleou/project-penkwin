@@ -3,8 +3,7 @@
 ## Project setup
 ```
 npm install
-npm install @googlemaps/js-api-loader
-```
+`
 
 ### Compiles and hot-reloads for development
 ```
