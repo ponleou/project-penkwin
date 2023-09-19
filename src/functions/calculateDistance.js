@@ -1,5 +1,5 @@
 export function calculateDistance(pos1, pos2) {
-    const R = 3958.8 // Radius of the Earth in miles
+    const R = 6378.137 // Radius of the Earth in kilometeres
     const rlat1 = pos1.lat * (Math.PI / 180) // Convert degrees to radians
     const rlat2 = pos2.lat * (Math.PI / 180) // Convert degrees to radians
     const difflat = rlat2 - rlat1 // Radian difference (latitudes)
