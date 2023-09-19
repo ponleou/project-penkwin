@@ -1,14 +1,16 @@
 import { calculateDistance } from "./calculateDistance";
-let supportedStopsDT = require('../../data/supported-stops/supportedStopsDT');
-let supportedStopsNS = require('../../data/supported-stops/supportedStopsNS');
+let supportedStopsDT = require('../../data/supported-stops/supportedStopsDT').DTStops;
+let supportedStopsNS = require('../../data/supported-stops/supportedStopsNS').NSStops;
+let supportedStopsTE = require('../../data/supported-stops/supportedStopsTE').TEStops;
 
 // outputs an array of best paths for each transit route
 export function pathCalculations(startingCoord, destinationCoord) {
     const possibleRoutes = [];
 
     const transitRoutes = [
-        supportedStopsDT.DTStops,
-        supportedStopsNS.NSStops,
+        supportedStopsDT,
+        supportedStopsNS,
+        supportedStopsTE,
     ]
     let tempArray = [];
 
@@ -18,7 +20,6 @@ export function pathCalculations(startingCoord, destinationCoord) {
             const distanceAndStops = [];
             const allDistances = [];
             let closestStopCoord;
-
             // calculates the distance between coords and all stops, pushes to "allDistances" and "distanceAndStops" to track the stop
             for (let stop of transitRoute) {
                 let distance = 0;

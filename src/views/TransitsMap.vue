@@ -44,8 +44,10 @@ import { addMarker } from "@/functions/addMarkers"
 import { pathCalculations } from '@/functions/pathCalculations';
 import { calculateDistance } from '@/functions/calculateDistance';
 
-let supportedStopsDT = require('../../data/supported-stops/supportedStopsDT');
-let supportedStopsNS = require('../../data/supported-stops/supportedStopsNS');
+let supportedStopsDT = require('../../data/supported-stops/supportedStopsDT').DTStops;
+let supportedStopsNS = require('../../data/supported-stops/supportedStopsNS').NSStops;
+let supportedStopsTE = require('../../data/supported-stops/supportedStopsTE').TEStops;
+
 let keys = require("../../data/google-map-apikey.json");
 let errorText = null;
 let loader = null;
@@ -184,7 +186,7 @@ export default {
             for(let route of possibleRoutes) {
                 let endStopName = route.coords.endPath.stopName;
                 let startStopname = route.coords.startPath.stopName;
-                    let d = calculateTransitDistance(startStopname, endStopName, eval("supportedStops" + endStopName.slice(0,2) + "." + endStopName.slice(0,2) + "Stops")) + route.rideshareDistance;
+                    let d = calculateTransitDistance(startStopname, endStopName, eval("supportedStops" + endStopName.slice(0,2))) + route.rideshareDistance;
                     allDistances.push(d);
                     distancesAndRoute.push({distance: d, route});
             }
@@ -274,12 +276,16 @@ export default {
                     const transitLayer = new google.maps.TransitLayer();
                     transitLayer.setMap(map);
 
-                    for (let stop of supportedStopsDT.DTStops) {
+                    for (let stop of supportedStopsDT) {
                         const { marker } = addMarker(map, stop.coords, stop.name, 'dodgerblue', 0.5,)
                     }
 
-                    for (let stop of supportedStopsNS.NSStops) {
+                    for (let stop of supportedStopsNS) {
                         const { marker } = addMarker(map, stop.coords, stop.name, 'red', 0.5,)
+                    }
+
+                    for (let stop of supportedStopsTE) {
+                        const { marker } = addMarker(map, stop.coords, stop.name, 'sienna', 0.5,)
                     }
                 })
             }
