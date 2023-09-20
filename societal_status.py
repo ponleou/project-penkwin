@@ -1,14 +1,13 @@
-import numpy as np
-import time as _time
+import json
 import datetime as dt
 from datetime import timedelta
 
-# User Variables
+
 today_date = dt.datetime.now()
 one_month_duration = timedelta(weeks = 4)
-
 next_month_date = today_date + one_month_duration
 
+# User Variables
 uber_credits = 0
 
 # Status checker for user
@@ -65,18 +64,42 @@ def check_status_accommodation():
 
         # Needs fixed input of 1 character
 
-        help = input("Do you require accomodation when riding with Uber (Y/N): ")
+        help = input("Do you require accommodation when riding with Uber (Y/N): ")
 
         if help == "Y":
             accommodation += 1
+            print("\nWe will notify our drivers about your accommodation.")
         else:
             accomodation = 0
             return accommodation
 
+# Calling the functions
 
 check_status_working_student()
 check_status_poverty()
 check_status_accommodation()
 print("\nWorking Student: ", working_student, "\nFinancial Aid: ", poverty , "\nRequires Accommodation", accommodation)
 
+#--------------------------------
+
+# THIS NEEDS IMPROVEMENT AND FUNCTIONALITY
+
+# Json Dump Files
+users = {}
+users['info'] = []
+
+# Create a dictionary with user information
+user_info = {
+    "working_student": working_student,
+    "poverty": poverty,
+    "accommodation": accommodation,
+}
+
+file_name = "user_info.json"
+
+with open(file_name, "w") as json_file:
+    json.dump(user_info, json_file, indent=4)
+
+print(f"User information has been saved to {file_name}")
+print(user_info)
 
