@@ -1,19 +1,29 @@
-# project-penkwin
+# project-PENKwin
 
-## Project setup
+Developed by team "PENKwin" with the mission to bring inclusivity, and ease integration between public transit and rideshares.
+
+### Team
+
+Team PENKwin (APAC)
+
+- Keo Ponleou Sok
+- Songkhattey Som
+- Edward Chhun
+- Ekaterina Trunova
+
+## Project development deployment (Path-finding function with Google Maps API) using Node.js and Vue.js
+
 ```
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Project deployment for the User Status Assignment
+
+Installing dependencies
+
 ```
-npm run build
+pip install datetime
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Run "societal_status.py" on a python supported terminal
