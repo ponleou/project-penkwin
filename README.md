@@ -6,7 +6,7 @@ Developed by team "PENKwin" with the mission to bring inclusivity, and ease inte
 
 Team PENKwin (APAC)
 
-- Keo Ponleou Sok
+- Ponleou Keo Sok
 - Songkhattey Som
 - Edward Chhun
 - Ekaterina Trunova
