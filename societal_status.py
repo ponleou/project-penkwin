@@ -70,8 +70,50 @@ def check_status_accommodation():
             accommodation += 1
             print("\nWe will notify our drivers about your accommodation.")
         else:
-            accomodation = 0
+            accommodation = 0
             return accommodation
+
+# Time Skewing Function - Needs polishing and improvement
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# This will be changed by data analysts each month, catering to students/working status to improve productivity 
+# and increase economical growth in Uberland
+
+# Predefined transportation schedule
+
+transportation_schedule = {
+    "Morning": datetime.time(8, 0),
+    "Afternoon": datetime.time(14, 0),
+    "Evening": datetime.time(18, 0),
+}
+
+# Function to check if the user's requested time is available
+def check_time_availability(user_time, schedule):
+    for slot, time_slot in schedule.items():
+        if user_time == time_slot:
+            return slot
+    return None
+
+# Prompt the user for their time availability
+while True:
+    user_input = input("Please enter your preferred time (e.g., '08:00 AM'): ")
+    
+    # Parse user input to a datetime.time object
+    try:
+        user_time = datetime.datetime.strptime(user_input, '%I:%M %p').time()
+    except ValueError:
+        print("Invalid time format. Please use 'hh:mm AM/PM' format.")
+        continue
+
+    # Check if the user's requested time is available
+    slot = check_time_availability(user_time, transportation_schedule)
+    
+    if slot:
+        print(f"Great! Your transportation is scheduled for {slot}.")
+        break
+    else:
+        print("Sorry, the selected time is not available. Please choose another time.")
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 # Calling the functions
 
