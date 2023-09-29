@@ -6,6 +6,7 @@ exports.NSStops = [
       lng: 103.85513456288919,
     },
     timeArrival: null,
+    color: "red",
   },
   {
     name: "NS25",
@@ -14,6 +15,7 @@ exports.NSStops = [
       lng: 103.85199899540058,
     },
     timeArrival: null,
+    color: "red",
   },
   {
     name: "NS23",
@@ -22,6 +24,7 @@ exports.NSStops = [
       lng: 103.8387149579102,
     },
     timeArrival: null,
+    color: "red",
   },
   {
     name: "NS21",
@@ -30,6 +33,7 @@ exports.NSStops = [
       lng: 103.83821180379815,
     },
     timeArrival: null,
+    color: "red",
   },
   {
     name: "NS19",
@@ -38,6 +42,7 @@ exports.NSStops = [
       lng: 103.84729090971967,
     },
     timeArrival: null,
+    color: "red",
   },
   {
     name: "NS17",
@@ -46,6 +51,7 @@ exports.NSStops = [
       lng: 103.84829963033837,
     },
     timeArrival: null,
+    color: "red",
   },
   {
     name: "NS16",
@@ -54,6 +60,7 @@ exports.NSStops = [
       lng: 103.85023952712812,
     },
     timeArrival: null,
+    color: "red",
   },
   {
     name: "NS15",
@@ -62,5 +69,6 @@ exports.NSStops = [
       lng: 103.84504570610073,
     },
     timeArrival: null,
+    color: "red",
   },
 ];

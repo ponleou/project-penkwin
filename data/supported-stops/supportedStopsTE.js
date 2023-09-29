@@ -6,6 +6,7 @@ exports.TEStops = [
       lng: 103.8507851704707,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE17",
@@ -14,6 +15,7 @@ exports.TEStops = [
       lng: 103.83917306227751,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE16",
@@ -22,6 +24,7 @@ exports.TEStops = [
       lng: 103.83354366469494,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE14",
@@ -30,6 +33,7 @@ exports.TEStops = [
       lng: 103.83201647317615,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE12",
@@ -38,6 +42,7 @@ exports.TEStops = [
       lng: 103.8197793930417,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE11",
@@ -46,6 +51,7 @@ exports.TEStops = [
       lng: 103.82607513096322,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE9",
@@ -54,6 +60,7 @@ exports.TEStops = [
       lng: 103.83938246083517,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE8",
@@ -62,6 +69,7 @@ exports.TEStops = [
       lng: 103.83397450868645,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE7",
@@ -70,6 +78,7 @@ exports.TEStops = [
       lng: 103.83235252605088,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE5",
@@ -78,6 +87,7 @@ exports.TEStops = [
       lng: 103.83697173503069,
     },
     timeArrival: null,
+    color: "sienna",
   },
   {
     name: "TE4",
@@ -86,5 +96,6 @@ exports.TEStops = [
       lng: 103.81878310746298,
     },
     timeArrival: null,
+    color: "sienna",
   },
 ];
