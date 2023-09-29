@@ -83,7 +83,7 @@ exports.DTStops = [
     name: "DT29",
     coords: {
       lat: 1.3360738625353232,
-      lng: 103.91828464073042
+      lng: 103.91828464073042,
     },
     timeArrival: null,
   },
@@ -91,7 +91,7 @@ exports.DTStops = [
     name: "DT31",
     coords: {
       lat: 1.3467309790778712,
-      lng: 103.93775102865686
+      lng: 103.93775102865686,
     },
     timeArrival: null,
   },
