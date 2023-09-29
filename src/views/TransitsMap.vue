@@ -8,13 +8,13 @@
     <p></p>
     <div>
       <button
-        @click="mapClickerFunction('startingCoords', 'start', 'yellow')"
+        @click="mapClickerFunction('startingCoords', 'start', 'black')"
         :disabled="startingCoords || !buttonClickable"
       >
         Set starting location
       </button>
       <button
-        @click="mapClickerFunction('destinationCoords', 'destination', 'lime')"
+        @click="mapClickerFunction('destinationCoords', 'destination', 'black')"
         :disabled="destinationCoords || !buttonClickable"
       >
         Set destination
@@ -57,16 +57,18 @@
       </div>
     </div>
     <p></p>
+    <button @click="refresh">refresh</button>
     <div ref="mapDiv" style="width: 100%; height: 80vh"></div>
   </div>
 </template>
 
 <script>
-import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { Loader } from "@googlemaps/js-api-loader";
 import { addMarker } from "@/functions/addMarkers";
 import { pathCalculations } from "@/functions/pathCalculations";
 import { calculateDistance } from "@/functions/calculateDistance";
+import { createPath } from "@/functions/createPath";
 
 let supportedStopsDT =
   require("../../data/supported-stops/supportedStopsDT").DTStops;
@@ -74,6 +76,15 @@ let supportedStopsNS =
   require("../../data/supported-stops/supportedStopsNS").NSStops;
 let supportedStopsTE =
   require("../../data/supported-stops/supportedStopsTE").TEStops;
+let supportedStopsEW =
+  require("../../data/supported-stops/supportedStopsEW").EWStops;
+
+const supportedStops = [
+  supportedStopsDT,
+  supportedStopsNS,
+  supportedStopsTE,
+  supportedStopsEW,
+];
 
 let keys = require("../../data/google-map-apikey.json");
 let errorText = null;
@@ -99,6 +110,7 @@ try {
   errorText = e.message;
 }
 
+// all the function that requires using the map variable will stay in the main file
 export default {
   setup() {
     let showLocation = ref(false);
@@ -211,17 +223,19 @@ export default {
         calculateDistance(startingCoord, destinationCoord) <
         shortestRideshareDistance
       ) {
-        createPath(startingCoord, destinationCoord);
+        createPath(startingCoord, destinationCoord, map);
         return;
       }
 
       createPath(
         shortestRoute.coords.startPath.startingCoord,
-        shortestRoute.coords.startPath.startingStop
+        shortestRoute.coords.startPath.startingStop,
+        map
       );
       createPath(
         shortestRoute.coords.endPath.destinationCoord,
-        shortestRoute.coords.endPath.destinationStop
+        shortestRoute.coords.endPath.destinationStop,
+        map
       );
     }
 
@@ -256,17 +270,19 @@ export default {
       if (
         calculateDistance(startingCoord, destinationCoord) < shortestDistance
       ) {
-        createPath(startingCoord, destinationCoord);
+        createPath(startingCoord, destinationCoord, map);
         return;
       }
 
       createPath(
         shortestRoute.route.coords.endPath.destinationCoord,
-        shortestRoute.route.coords.endPath.destinationStop
+        shortestRoute.route.coords.endPath.destinationStop,
+        map
       );
       createPath(
         shortestRoute.route.coords.startPath.startingCoord,
-        shortestRoute.route.coords.startPath.startingStop
+        shortestRoute.route.coords.startPath.startingStop,
+        map
       );
     }
 
@@ -318,62 +334,56 @@ export default {
     }
 
     // create path line from 2 coordinates
-    function createPath(coord1, coord2) {
-      const pathLine = new google.maps.Polygon({
-        paths: [coord1, coord2],
-        strokeColor: "#FF0000",
-        strokeOpacity: 0.8,
-        strokeWeight: 1,
-      });
 
-      pathLine.setMap(map);
+    // for generating the map
+    async function loadMap(noRouteOverlay) {
+      const { Map } = await google.maps.importLibrary("maps");
+      map = new Map(mapDiv.value, {
+        center: { lat: 1.3704592477966075, lng: 103.80867157782815 },
+        zoom: 12,
+        mapId: keys.mapID,
+        disableDefaultUI: true,
+      });
+      if (!noRouteOverlay) {
+        new google.maps.TransitLayer().setMap(map);
+      }
+    }
+
+    // for setting the markers for each stop
+    function setStopsMarker() {
+      for (let routeStops of supportedStops) {
+        for (let stop of routeStops) {
+          const { marker } = addMarker(
+            map,
+            stop.coords,
+            stop.name + "\n arrive: " + stop.timeArrival,
+            stop.color,
+            0.5
+          );
+        }
+      }
+    }
+
+    async function defaultMap() {
+      await loadMap();
+      setStopsMarker();
+    }
+
+    function refresh() {
+      startingCoords.value = null;
+      destinationCoords.value = null;
+      defaultMap();
     }
 
     // everything that uses the map variable goes into the onMounted() lifecycle, only executed when the map is mounted
     onMounted(async function () {
       try {
-        loader.load().then(async () => {
-          const { Map } = await google.maps.importLibrary("maps");
+        (async function runOnMount() {
+          // this loader.load only needs to run once per session
+          await loader.load();
 
-          map = new Map(mapDiv.value, {
-            center: { lat: 1.3704592477966075, lng: 103.80867157782815 },
-            zoom: 12,
-            mapId: keys.mapID,
-            disableDefaultUI: true,
-          });
-          const transitLayer = new google.maps.TransitLayer();
-          transitLayer.setMap(map);
-
-          for (let stop of supportedStopsDT) {
-            const { marker } = addMarker(
-              map,
-              stop.coords,
-              stop.name,
-              "dodgerblue",
-              0.5
-            );
-          }
-
-          for (let stop of supportedStopsNS) {
-            const { marker } = addMarker(
-              map,
-              stop.coords,
-              stop.name,
-              "red",
-              0.5
-            );
-          }
-
-          for (let stop of supportedStopsTE) {
-            const { marker } = addMarker(
-              map,
-              stop.coords,
-              stop.name,
-              "sienna",
-              0.5
-            );
-          }
-        });
+          defaultMap();
+        })();
       } catch (e) {
         if (errorText)
           mapDiv.value.innerHTML = "error loading map <br/>" + errorText;
@@ -397,6 +407,7 @@ export default {
       cheapestOption,
       shortestOption,
       buttonClickable,
+      refresh,
     };
   },
 };
