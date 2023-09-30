@@ -24,5 +24,5 @@ export async function addMarker(map, position, title, color, scale = 1) {
     content: markerDesign.element,
   });
 
-  return { marker };
+  // return { marker };
 }
