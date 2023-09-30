@@ -7,18 +7,11 @@
     </div>
     <p></p>
     <div>
-      <button
-        @click="mapClickerFunction('startingCoords', 'start', 'black')"
-        :disabled="startingCoords || !buttonClickable"
-      >
-        Set starting location
+      <button @click="startCollection" :disabled="!buttonClickable">
+        Start
       </button>
-      <button
-        @click="mapClickerFunction('destinationCoords', 'destination', 'black')"
-        :disabled="destinationCoords || !buttonClickable"
-      >
-        Set destination
-      </button>
+      <p></p>
+      <button v-show="showConfirm" ref="confirmButton">Confirm</button>
       <p v-if="!buttonClickable" style="color: red">
         Click on the map to select a location
       </p>
@@ -36,18 +29,10 @@
     >
       Shortest Option
     </button>
-    <div v-if="startingCoords">
-      Starting Coordinates: {{ startingCoords.lat }}, {{ startingCoords.lng }}
-    </div>
-    <div v-if="destinationCoords">
-      Destination Coordinates: {{ destinationCoords.lat }},
-      {{ destinationCoords.lng }}
-    </div>
+    <div v-if="startingCoords"></div>
+    <div v-if="destinationCoords"></div>
     <div v-if="showLocation">
-      <p v-if="currentPosition.lat || currentPosition.lng">
-        Your current location: {{ currentPosition.lat }},
-        {{ currentPosition.lng }}
-      </p>
+      <p v-if="currentPosition.lat || currentPosition.lng"></p>
       <p v-else>Loading...</p>
       <p v-if="error">{{ error }}</p>
       <div v-else-if="!(currentPosition.lat || currentPosition.lng)">
@@ -113,14 +98,16 @@ try {
 // all the function that requires using the map variable will stay in the main file
 export default {
   setup() {
-    let showLocation = ref(false);
-    let loadingTimeout = ref(false);
-    let error;
-
     let map = null;
     const mapDiv = ref(null);
 
-    // get the user's position
+    //
+    //
+    // GEOLOCATION FINDER
+    let showLocation = ref(false);
+    let loadingTimeout = ref(false);
+    let error;
+    // get the user's geolocation position
     const currentPosition = ref({ lat: null, lng: null });
 
     function getLocation() {
@@ -142,7 +129,7 @@ export default {
 
           let settingMarker = setInterval(function () {
             if (currentPosition.value.lat) {
-              const { marker } = addMarker(map, {
+              addMarker(map, {
                 lat: currentPosition.value.lat,
                 lng: currentPosition.value.lng,
               });
@@ -159,44 +146,114 @@ export default {
       }
     }
 
-    // setting the starting and destination coordinates
+    //
+    //
+    // USER LOCATION SELECTION
+
+    // click listener for the map
     let clickListener = null;
+
+    // if true, button is clickable, if false, button is unclickable
     let buttonClickable = ref(true);
 
-    function mapClickerFunction(variableName, name, color) {
+    // if true, button is shown, if false, button is hidden
+    let showConfirm = ref(false);
+    const confirmButton = ref(null);
+
+    let startingCoords = ref(null);
+    let destinationCoords = ref(null);
+    let ranDestinationSelection = false;
+
+    // whether the confirm button should generate an event listener (only one should be active at a time)
+    // true: generate an event listener
+    // false: dont generate an event listener
+    let callConfirmListener = true;
+
+    function startCollection() {
+      ranDestinationSelection = false;
+      startUserSelect("startingCoords");
+    }
+
+    async function startUserSelect(variableName) {
+      await locationSelectMap(variableName);
+    }
+
+    // sets a marker at the starting and destination coordinates (loads a clean map)
+    async function locationSelectMap(variableName) {
+      await loadMap(false);
+
+      if (startingCoords.value) {
+        addMarker(map, startingCoords.value, "start", "black", "1");
+      }
+
+      if (destinationCoords.value) {
+        addMarker(map, destinationCoords.value, "destination", "black", "2");
+      }
+
+      userLocationSelect(variableName);
+    }
+
+    // listens for selected coordinates and assigns to starting and destination points
+    async function userLocationSelect(variableName) {
       let coordinatesVariable = null;
       buttonClickable.value = false;
+
+      // waits for addListener to run once before going next
+      let listenerWaiter = Promise.resolve();
+
       clickListener = map.addListener("click", ({ latLng: { lat, lng } }) => {
-        coordinatesVariable = { lat: lat(), lng: lng() };
-        buttonClickable.value = true;
+        listenerWaiter = listenerWaiter.then(async () => {
+          coordinatesVariable = { lat: lat(), lng: lng() };
+          showConfirm.value = true;
+
+          eval(variableName + ".value = coordinatesVariable");
+
+          clearListener(clickListener);
+          await locationSelectMap(variableName);
+
+          if (callConfirmListener) {
+            listenConfirm();
+            callConfirmListener = false;
+          }
+        });
       });
 
-      let createMarker = setInterval(function () {
-        if (coordinatesVariable) {
-          let { marker } = addMarker(
-            map,
-            { lat: coordinatesVariable.lat, lng: coordinatesVariable.lng },
-            name,
-            color
-          );
-          clearDestinationInterval(createMarker);
-        }
-      }, 250);
+      // when confirmButton is clicked, the inputed coordinations is saved
+      function listenConfirm() {
+        confirmButton.value.addEventListener("click", handleConfirm);
+      }
 
-      function clearDestinationInterval() {
-        clearInterval(createMarker);
-        if (variableName === "destinationCoords") {
-          destinationCoords.value = coordinatesVariable;
+      function handleConfirm() {
+        callConfirmListener = true;
+        confirmButton.value.removeEventListener("click", handleConfirm);
+
+        showConfirm.value = false;
+
+        if (ranDestinationSelection) {
+          confirmedLocation();
         }
-        if (variableName === "startingCoords") {
-          startingCoords.value = coordinatesVariable;
+
+        if (!ranDestinationSelection) {
+          ranDestinationSelection = true;
+          startUserSelect("destinationCoords", "destination");
         }
+
+        buttonClickable.value = true;
+      }
+
+      // runs when the user finishes selecting the locations (returns to the default map)
+      async function confirmedLocation() {
+        await defaultMap();
       }
     }
 
-    // calculating the paths
-    let startingCoords = ref(null);
-    let destinationCoords = ref(null);
+    function clearListener(listener) {
+      listener.remove();
+    }
+
+    //
+    //
+    // PATH CALCULATIONS
 
     // cheapest option chooses the route with the least rideshare distance
     function cheapestOption(startingCoord, destinationCoord) {
@@ -223,19 +280,21 @@ export default {
         calculateDistance(startingCoord, destinationCoord) <
         shortestRideshareDistance
       ) {
-        createPath(startingCoord, destinationCoord, map);
+        createPath(startingCoord, destinationCoord, map, "#68a677");
         return;
       }
 
       createPath(
         shortestRoute.coords.startPath.startingCoord,
         shortestRoute.coords.startPath.startingStop,
-        map
+        map,
+        "#68a677"
       );
       createPath(
         shortestRoute.coords.endPath.destinationCoord,
         shortestRoute.coords.endPath.destinationStop,
-        map
+        map,
+        "#68a677"
       );
     }
 
@@ -270,19 +329,21 @@ export default {
       if (
         calculateDistance(startingCoord, destinationCoord) < shortestDistance
       ) {
-        createPath(startingCoord, destinationCoord, map);
+        createPath(startingCoord, destinationCoord, map, "#B33A3A");
         return;
       }
 
       createPath(
         shortestRoute.route.coords.endPath.destinationCoord,
         shortestRoute.route.coords.endPath.destinationStop,
-        map
+        map,
+        "#B33A3A"
       );
       createPath(
         shortestRoute.route.coords.startPath.startingCoord,
         shortestRoute.route.coords.startPath.startingStop,
-        map
+        map,
+        "#B33A3A"
       );
     }
 
@@ -333,18 +394,21 @@ export default {
       return distance;
     }
 
-    // create path line from 2 coordinates
+    //
+    //
+    // MAP GENERATION
 
     // for generating the map
-    async function loadMap(noRouteOverlay) {
+    async function loadMap(RouteOverlay = true) {
       const { Map } = await google.maps.importLibrary("maps");
       map = new Map(mapDiv.value, {
-        center: { lat: 1.3704592477966075, lng: 103.80867157782815 },
+        center: { lat: 1.3517688686358171, lng: 103.8176628012383 },
         zoom: 12,
         mapId: keys.mapID,
         disableDefaultUI: true,
       });
-      if (!noRouteOverlay) {
+
+      if (RouteOverlay) {
         new google.maps.TransitLayer().setMap(map);
       }
     }
@@ -353,29 +417,41 @@ export default {
     function setStopsMarker() {
       for (let routeStops of supportedStops) {
         for (let stop of routeStops) {
-          const { marker } = addMarker(
+          addMarker(
             map,
             stop.coords,
-            stop.name + "\n arrive: " + stop.timeArrival,
+            stop.name + ",\narrival: " + stop.timeArrival,
             stop.color,
-            0.5
+            stop.name.substring(2),
+            0.7,
+            true
           );
         }
       }
     }
 
+    // generate the default map (with markers)
     async function defaultMap() {
       await loadMap();
       setStopsMarker();
+
+      if (startingCoords.value) {
+        addMarker(map, startingCoords.value, "start", "black", "1");
+      }
+
+      if (destinationCoords.value) {
+        addMarker(map, destinationCoords.value, "destination", "black", "2");
+      }
     }
 
+    // refreshes map (clear all coordinates)
     function refresh() {
       startingCoords.value = null;
       destinationCoords.value = null;
       defaultMap();
     }
 
-    // everything that uses the map variable goes into the onMounted() lifecycle, only executed when the map is mounted
+    // loader.load() must run when mounted in order to use map
     onMounted(async function () {
       try {
         (async function runOnMount() {
@@ -401,13 +477,16 @@ export default {
       showLocation,
       loadingTimeout,
       mapDiv,
-      mapClickerFunction,
+      userLocationSelect,
       destinationCoords,
       startingCoords,
       cheapestOption,
       shortestOption,
       buttonClickable,
       refresh,
+      showConfirm,
+      confirmButton,
+      startCollection,
     };
   },
 };

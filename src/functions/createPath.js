@@ -1,7 +1,7 @@
-export function createPath(coord1, coord2, mapEl) {
+export function createPath(coord1, coord2, mapEl, color = "lightblue") {
   const pathLine = new google.maps.Polygon({
     paths: [coord1, coord2],
-    strokeColor: "#FF0000",
+    strokeColor: color,
     strokeOpacity: 0.8,
     strokeWeight: 1,
   });
