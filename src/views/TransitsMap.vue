@@ -43,7 +43,7 @@
     </div>
     <p></p>
     <button @click="refresh">refresh</button>
-    <div ref="mapDiv" style="width: 100%; height: 80vh"></div>
+    <div class="mapDiv" ref="mapDiv"></div>
   </div>
 </template>
 
@@ -422,8 +422,8 @@ export default {
             stop.coords,
             stop.name + ",\narrival: " + stop.timeArrival,
             stop.color,
-            stop.name.substring(2),
-            0.7,
+            "",
+            0.5,
             true
           );
         }
@@ -492,4 +492,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.mapDiv {
+  overflow: visible;
+  width: 100%;
+  height: 60vh;
+}
+</style>
