@@ -6,6 +6,7 @@ exports.DTStops = [
       lng: 103.76720307786846,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT5",
@@ -14,6 +15,7 @@ exports.DTStops = [
       lng: 103.77599425717294,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT8",
@@ -22,6 +24,7 @@ exports.DTStops = [
       lng: 103.80796589552126,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT11",
@@ -30,6 +33,7 @@ exports.DTStops = [
       lng: 103.8382037743078,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT13",
@@ -38,6 +42,7 @@ exports.DTStops = [
       lng: 103.85255584333447,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT16",
@@ -46,6 +51,7 @@ exports.DTStops = [
       lng: 103.8589666347505,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT19",
@@ -54,6 +60,7 @@ exports.DTStops = [
       lng: 103.8434244885373,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT21",
@@ -62,6 +69,7 @@ exports.DTStops = [
       lng: 103.84997176913734,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT23",
@@ -70,6 +78,7 @@ exports.DTStops = [
       lng: 103.86338897488652,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT26",
@@ -78,21 +87,24 @@ exports.DTStops = [
       lng: 103.89009254440981,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT29",
     coords: {
       lat: 1.3360738625353232,
-      lng: 103.91828464073042
+      lng: 103.91828464073042,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
   {
     name: "DT31",
     coords: {
       lat: 1.3467309790778712,
-      lng: 103.93775102865686
+      lng: 103.93775102865686,
     },
     timeArrival: null,
+    color: "dodgerblue",
   },
 ];
