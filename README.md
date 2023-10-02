@@ -36,13 +36,18 @@ This integration will benefit both Uber riders and public transportation users. 
 ## Media
 
 ### Overview:
-![image_2023-09-20_22-49-25](https://github.com/ponleou/project-penkwin/assets/89851049/d40cbeca-1fdb-429d-90b8-5e267128c76a)
+![image](https://github.com/ponleou/project-penkwin/assets/89851049/17cebdf1-5856-40ce-b449-45622f387df6)
+![image](https://github.com/ponleou/project-penkwin/assets/89851049/191bde7f-c6c8-40fe-8055-b8a208374256)
+![image](https://github.com/ponleou/project-penkwin/assets/89851049/cd8b5d9c-49a4-402d-b549-10beab77a7ca)
+![image](https://github.com/ponleou/project-penkwin/assets/89851049/d6ffc1b5-d766-4d89-ac68-fb7024c67540)
+![image](https://github.com/ponleou/project-penkwin/assets/89851049/908b3ea6-a3bd-4cae-a4e9-9d713b3e45cc)
+![image](https://github.com/ponleou/project-penkwin/assets/89851049/487cfe5c-3e46-4410-bba3-8a18d650496a)
 
 ### Selected path: Cheapest Option
-![image_2023-09-20_22-54-03](https://github.com/ponleou/project-penkwin/assets/89851049/1449843f-992c-401a-a090-8a80bbb57233)
+![image](https://github.com/ponleou/project-penkwin/assets/89851049/7073b662-7705-43be-a51a-f4bf4d2812da)
 
 ### Selected path: Shortest Option
-![image_2023-09-20_22-55-21](https://github.com/ponleou/project-penkwin/assets/89851049/498731bd-1135-4acc-8b92-72a728e06c6e)
+![image](https://github.com/ponleou/project-penkwin/assets/89851049/2e34b547-4c2f-403b-98a0-b4e4b470665f)
 
 ## Prerequisite
 
@@ -66,3 +71,9 @@ pip install datetime
 ```
 
 Run "societal_status.py" on a python supported terminal
+
+## Credits
+
+Credits to [@ilahi123] (https://github.com/ilahi123) for the Uber styled map
+
+https://github.com/ilahi123/Uber-styled-Google-Maps/blob/master/map_style.json
