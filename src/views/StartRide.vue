@@ -1,59 +1,16 @@
-<template>
-  <div>
-    <div>
-      <button @click="getLocation" :disabled="showLocation">
-        Get location
-      </button>
-    </div>
-    <p></p>
-    <div>
-      <button @click="startCollection" :disabled="!buttonClickable">
-        Start
-      </button>
-      <p></p>
-      <button v-show="showConfirm" ref="confirmButton">Confirm</button>
-      <p v-if="!buttonClickable" style="color: red">
-        Click on the map to select a location
-      </p>
-    </div>
-    <p></p>
-    <button
-      @click="cheapestOption(startingCoords, destinationCoords)"
-      :disabled="!(destinationCoords && startingCoords)"
-    >
-      Cheapest Option (shortest rideshare distances)
-    </button>
-    <button
-      @click="shortestOption(startingCoords, destinationCoords)"
-      :disabled="!(destinationCoords && startingCoords)"
-    >
-      Shortest Option
-    </button>
-    <div v-if="startingCoords"></div>
-    <div v-if="destinationCoords"></div>
-    <div v-if="showLocation">
-      <p v-if="currentPosition.lat || currentPosition.lng"></p>
-      <p v-else>Loading...</p>
-      <p v-if="error">{{ error }}</p>
-      <div v-else-if="!(currentPosition.lat || currentPosition.lng)">
-        <p v-if="loadingTimeout">
-          If the location does not load, please check your permissions.
-        </p>
-      </div>
-    </div>
-    <p></p>
-    <button @click="refresh">refresh</button>
-    <div class="mapDiv" ref="mapDiv"></div>
-  </div>
-</template>
-
 <script>
+import OneTapLogo from "@/components/OneTapLogo.vue";
+import BackButton from "@/components/BackButton.vue";
 import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { Loader } from "@googlemaps/js-api-loader";
 import { addMarker } from "@/functions/addMarkers";
 import { pathCalculations } from "@/functions/pathCalculations";
 import { calculateDistance } from "@/functions/calculateDistance";
 import { createPath } from "@/functions/createPath";
+import { Icon } from "@iconify/vue";
+import SettingButton from "@/components/SettingButton.vue";
+import Button from "@/components/Button.vue";
+import router from "@/router";
 
 let supportedStopsDT =
   require("../../data/supported-stops/supportedStopsDT").DTStops;
@@ -179,8 +136,12 @@ export default {
     }
 
     // sets a marker at the starting and destination coordinates (loads a clean map)
-    async function locationSelectMap(variableName) {
-      await loadMap(false);
+    async function locationSelectMap(variableName, coords) {
+      if (coords) {
+        await loadMap(false, coords, 15);
+      } else {
+        await loadMap(false);
+      }
 
       if (startingCoords.value) {
         addMarker(map, startingCoords.value, "start", "black", "1");
@@ -209,7 +170,7 @@ export default {
           eval(variableName + ".value = coordinatesVariable");
 
           clearListener(clickListener);
-          await locationSelectMap(variableName);
+          await locationSelectMap(variableName, coordinatesVariable);
 
           if (callConfirmListener) {
             listenConfirm();
@@ -399,11 +360,15 @@ export default {
     // MAP GENERATION
 
     // for generating the map
-    async function loadMap(RouteOverlay = true) {
+    async function loadMap(
+      RouteOverlay = true,
+      coords = { lat: 1.3517688686358171, lng: 103.8176628012383 },
+      zoom = 12
+    ) {
       const { Map } = await google.maps.importLibrary("maps");
       map = new Map(mapDiv.value, {
-        center: { lat: 1.3517688686358171, lng: 103.8176628012383 },
-        zoom: 12,
+        center: coords,
+        zoom: zoom,
         mapId: keys.mapID,
         disableDefaultUI: true,
       });
@@ -462,7 +427,10 @@ export default {
           defaultMap();
         } catch (e) {
           if (errorText)
-            mapDiv.value.innerHTML = "error loading map <br/>" + errorText;
+            mapDiv.value.innerHTML =
+              '<p style="color: red; width: 100%; word-wrap: break-word">Error loading map</p> <p style=" width: 100%; word-wrap: break-word">' +
+              errorText +
+              "</p>";
         }
       }
     });
@@ -473,7 +441,10 @@ export default {
 
     return {
       currentPosition,
+
+      //   for geolocation unsupported
       error,
+
       getLocation,
       showLocation,
       loadingTimeout,
@@ -490,13 +461,123 @@ export default {
       startCollection,
     };
   },
+
+  components: {
+    OneTapLogo,
+    BackButton,
+    Icon,
+    SettingButton,
+    Button,
+  },
 };
 </script>
 
+<template>
+  <div class="header">
+    <div class="header__banner">
+      <BackButton @click="$router.push({ name: 'One Tap' })"></BackButton>
+      <SettingButton></SettingButton>
+    </div>
+    <div>
+      <div v-if="!buttonClickable" class="header__instruction-text">
+        Click on the map to select a location
+      </div>
+      <div
+        v-if="destinationCoords && startingCoords && buttonClickable"
+        class="ready-buttons"
+      >
+        <Button
+          @click="cheapestOption(startingCoords, destinationCoords)"
+          secondary="true"
+          >Cheapest Option</Button
+        >
+        <Button
+          @click="shortestOption(startingCoords, destinationCoords)"
+          secondary="true"
+          >Shortest Option</Button
+        >
+      </div>
+    </div>
+  </div>
+  <div class="screen">
+    <div ref="mapDiv" class="mapDiv"></div>
+  </div>
+  <div class="footer">
+    <Button v-if="buttonClickable" @click="startCollection"
+      >Select Locations</Button
+    >
+    <span v-show="!buttonClickable" ref="confirmButton">
+      <Button :disabled="!showConfirm" :class="{ disabled: !showConfirm }"
+        >Confirm</Button
+      >
+    </span>
+  </div>
+</template>
+
 <style scoped>
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+.header__banner {
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.header__instruction-text {
+  color: red;
+  text-align: center;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  font-weight: bold;
+}
+.screen {
+  height: 100%;
+  box-sizing: border-box;
+}
+
 .mapDiv {
-  overflow: visible;
   width: 100%;
-  height: 60vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mapDiv p {
+  width: 100vw;
+}
+
+.footer {
+  z-index: 99;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background-color: white;
+}
+
+.disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
+
+.disabled:hover {
+  background-color: grey;
+}
+
+.ready-buttons {
+  display: flex;
+  padding: 1rem;
+  background-color: white;
+  gap: 1rem;
 }
 </style>
