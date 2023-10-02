@@ -3,7 +3,7 @@ export function createPath(coord1, coord2, mapEl, color = "lightblue") {
     paths: [coord1, coord2],
     strokeColor: color,
     strokeOpacity: 0.8,
-    strokeWeight: 1,
+    strokeWeight: 3,
   });
 
   pathLine.setMap(mapEl);
