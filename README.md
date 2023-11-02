@@ -1,4 +1,4 @@
-# One-Tap
+# One-Tap | Uber Hackathon Regional Finals 2023
 
 Developed by team "PENKwin" with the mission to bring inclusivity, and ease integration between public transits and rideshares.
 
