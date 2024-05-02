@@ -1,4 +1,4 @@
-# One-Tap
+# One-Tap | Virtual Global Hackathon Project
 
 Developed by team "PENKwin" with the mission to bring inclusivity, and ease integration between public transits and rideshares.
 
@@ -77,6 +77,6 @@ Run "societal_status.py" on a python supported terminal
 
 ## Credits
 
-Credits to [@ilahi123] (https://github.com/ilahi123) for the Uber styled map
+Credits to [@ilahi123](https://github.com/ilahi123) for the Uber styled map
 
 https://github.com/ilahi123/Uber-styled-Google-Maps/blob/master/map_style.json
